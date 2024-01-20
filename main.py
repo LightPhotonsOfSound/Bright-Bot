@@ -3,12 +3,9 @@ from discord.ext import commands
 import openai
 import asyncio 
 import os
-import datetime
-import random
-from discord.ext import tasks
 
 
-global correct_option  # Add this line after the import statements
+global correct_option  
 responses = {}
 TOKEN = os.environ['TOKEN']
 openai.api_key = os.environ['API']
@@ -29,34 +26,20 @@ async def on_message(message):
         return
     print(f"{message.author} said: '{message.content}'")
   
-    @tasks.loop(hours=24)
-    async def daily_fact():
-
-        for guild in bot.guilds:
-            text_channels = [channel for channel in guild.channels if isinstance(channel, discord.TextChannel)]
-            if text_channels:
-                channel = text_channels[0]
-                break
-        else:
-            print("No text channels found in any guild.")
-            return
-
-        # Get a random fact
-        fact = get_random_fact()
-
-        # Send the daily fact to the channel
-        await channel.send(f"📚 Daily Fact: {fact}")
-
-    def get_random_fact():
-        # Use OpenAI GPT to generate a random fact
-        response = openai.Completion.create(
-            model = "gpt-3.5-turbo-instruct",
-            prompt="Generate a random fact:",
-            max_tokens=150
-        )
-        return response['choices'][0]['text'].strip()
+    if message.content.startswith('!funfact'):
+      prompt = "Generate a random fun fact"
+      response = openai.Completion.create(
+        model ='gpt-3.5-turbo-instruct',
+        prompt=prompt,
+        max_tokens=100,
+      )
+      await message.channel.send(response.choices[0].text)   
+          
+      )
     if message.content.startswith('!help'):
-      await message.channel.send("***Commands***\n**!help** - Shows this message\n**!ask (question)** - Asks ChatGPT a question\n**!8ball** - Asks the magic 8ball a question to get a fun response\n**trivia (topic)** - Generates a trivia question based on the topic\n**!answer** - Alows you to answer a trivia question")
+      await message.channel.send("***Commands***\n**!help** - Shows this message\n**!ask (question)** - Asks ChatGPT a question\n**!8ball** - Asks the magic 8ball a question to get a fun response\n**trivia (topic)** - Generates a trivia question based on the topic\n**!answer** - Alows you to answer a trivia question**!translate (target_language) (text)** - Translates the text to the specified language")
+
+    
     if message.content.startswith('!ask'):
         answer_prompt = message.content[4:]
         response = openai.Completion.create(
