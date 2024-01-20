@@ -35,20 +35,6 @@ async def on_message(message):
       )
       await message.channel.send(response.choices[0].text)
   
-  
-
-      
-  
-  
-    #if message.content.startswith('!answer'):
-      #global guess
-      #guess = message.content.lower()[8]
-      #response.update({message.author: guess})
-      #print = (f"{message.author} guessed {guess}")
-      #global guesser 
-      #guesser = message.author
-      #global responses
-      #responses.update({str(guesser): guess})
       
     if message.content.startswith('!trivia'):
       topic = message.content.split("!trivia")
@@ -62,7 +48,7 @@ async def on_message(message):
         )
       generated_question = response.choices[0].text
    #   await message.channel.send(generated_question)
-      answer_prompt = f"This is a multiple choice question : {generated_question}\nProvide an answer with some explaination Example :' A. .. ' "
+      answer_prompt = f"This is a multiple choice question : {generated_question}\nProvide an answer with some explaination Example :' A. .... ' "
 
       response = openai.Completion.create(
 
@@ -85,10 +71,18 @@ async def on_message(message):
       )
       await message.channel.send(response.choices[0].text)
 
+    if message.content.startswith('!answer'):
+      guess = message.content.lower()[8]
+      response.update({message.author: guess})
+      print_message = (f"{message.author} guessed {guess}") 
+      guesser = message.author
+      global responses
+      responses.update({str(guesser): guess})
+
     await message.channel.send(generated_question)
-    asyncio.sleep(20)
-    await message.channel.send(f"The correct answer is : {answer}")
-  
+    await asyncio.sleep(20)
+    await message.channel.send(f"The correct answer is : {answer}")  
 
 bot.run(DISCORD_TOKEN)
 
+      answer_prompt = (f"Give the answer to the following question: {generated_question}. Also explain why that is the correct answer Start your answer with the correct option for eg: A. ...")
