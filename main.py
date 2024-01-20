@@ -3,6 +3,11 @@ from discord.ext import commands
 import openai
 import asyncio 
 import os
+import datetime
+import random
+from discord.ext import tasks
+
+
 global correct_option  # Add this line after the import statements
 responses = {}
 TOKEN = os.environ['TOKEN']
@@ -17,11 +22,39 @@ bot = commands.Bot(command_prefix='!',intents=intents)
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
+      
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
     print(f"{message.author} said: '{message.content}'")
+  
+    @tasks.loop(hours=24)
+    async def daily_fact():
+
+        for guild in bot.guilds:
+            text_channels = [channel for channel in guild.channels if isinstance(channel, discord.TextChannel)]
+            if text_channels:
+                channel = text_channels[0]
+                break
+        else:
+            print("No text channels found in any guild.")
+            return
+
+        # Get a random fact
+        fact = get_random_fact()
+
+        # Send the daily fact to the channel
+        await channel.send(f"📚 Daily Fact: {fact}")
+
+    def get_random_fact():
+        # Use OpenAI GPT to generate a random fact
+        response = openai.Completion.create(
+            model = "gpt-3.5-turbo-instruct",
+            prompt="Generate a random fact:",
+            max_tokens=150
+        )
+        return response['choices'][0]['text'].strip()
     if message.content.startswith('!help'):
       await message.channel.send("***Commands***\n**!help** - Shows this message\n**!ask (question)** - Asks ChatGPT a question\n**!8ball** - Asks the magic 8ball a question to get a fun response\n**trivia (topic)** - Generates a trivia question based on the topic\n**!answer** - Alows you to answer a trivia question")
     if message.content.startswith('!ask'):
@@ -29,7 +62,7 @@ async def on_message(message):
         response = openai.Completion.create(
           model ='gpt-3.5-turbo-instruct',
           prompt=answer_prompt,
-          max_tokens=400,
+          max_tokens=500,
         )
         await message.channel.send(response.choices[0].text)            
     if message.content.startswith('!8ball'):
@@ -41,7 +74,7 @@ async def on_message(message):
       )
       await message.channel.send(response.choices[0].text) 
     topic = "math"
-    if message.content.startswith('!guess'):
+    if message.content.startswith('!answer'):
       global guess
       guess = message.content.lower()[7]
       print(f"{message.author} guessed: {guess}")
