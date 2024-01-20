@@ -140,21 +140,23 @@ async def on_message(message):
         pronounciation = response.choices[0].text
         await message.channel.send(f"The translation is: {translation}\n\n The pronounciation is :{pronounciation}")
 
-      elif message.content.startswith('translate english'):
-        prompt = "Translate this into english: " + message.content.split('!translate english ')[1]
+      elif message.content.startswith('!translate english'):
+        text_to_translate = message.content.split('!translate english ')[1]
+        prompt = f"Translate this into English: {text_to_translate}, and tell which language the text is from"
         response = openai.Completion.create(
-          model = 'gpt-3.5-turbo-instruct',
-          prompt = prompt,
+            model='gpt-3.5-turbo-instruct',
+            prompt=prompt,
+            max_tokens=500,
         )
         translation = response.choices[0].text
         await message.channel.send(f"The translation is: {translation}")
       
       else:
-        await message.channel.send("At the moment, we only provide translation to english, spanish, french, german, mandarin, hindi, arabic, russian...but feel free to use other all functions without hesitation!")
+        await message.channel.send("At the moment, we only provide translation to english, spanish, french, german, mandarin, hindi, arabic, russian... but feel free to use other all functions without hesitation!")
       
       
     if message.content.startswith('!help'):
-      await message.channel.send("***Commands***\n**!help** - Shows this message\n**!ask (question)** - Asks ChatGPT a question\n**!8ball** - Asks the magic 8ball a question to get a fun response\n**trivia (topic)** - Generates a trivia question based on the topic\n**!answer** - Alows you to answer a trivia question**!translate (target_language) (text)** - Translates the text to the specified language")
+      await message.channel.send("***Commands***\n**!help** - Shows this message\n**!ask (question)** - Asks ChatGPT a question\n**!8ball** - Asks the magic 8ball a question to get a fun response\n**!trivia (topic)** - Generates a trivia question based on the topic\n**!answer** - Alows you to answer a trivia question**!translate (target_language) (text)** - Translates the text to the specified language\n**!funfact** - Generates a random fun fact\n**!translate (target_language) (text)** - Translates the text to the specified language and gives the english pronounciation")
 
     
     if message.content.startswith('!ask'):
