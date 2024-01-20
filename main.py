@@ -34,8 +34,19 @@ async def on_message(message):
         max_tokens=100,
       )
       await message.channel.send(response.choices[0].text)   
-          
-      )
+    if message.content.startswith('!translate'):
+      if message.content.startswith('!translate spanish'):
+        prompt = "Translate this into spanish: " + message.content.split('!translate spanish ')[1]
+        response = openai.Completion.create(
+          model ='gpt-3.5-turbo-instruct',
+          prompt=prompt,  
+        )
+        translation = response.choices[0].text
+        await message.channel.send(f"The translation is: {translation}")
+        
+
+ 
+      
     if message.content.startswith('!help'):
       await message.channel.send("***Commands***\n**!help** - Shows this message\n**!ask (question)** - Asks ChatGPT a question\n**!8ball** - Asks the magic 8ball a question to get a fun response\n**trivia (topic)** - Generates a trivia question based on the topic\n**!answer** - Alows you to answer a trivia question**!translate (target_language) (text)** - Translates the text to the specified language")
 
