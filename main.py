@@ -44,8 +44,73 @@ async def on_message(message):
         translation = response.choices[0].text
         await message.channel.send(f"The translation is: {translation}")
         
+      elif message.content.startswith('!translate french'):
+        prompt = "Translate this into french: " + message.content.split('!translate french ')[1]
+        response = openai.Completion.create(
+          model ='gpt-3.5-turbo-instruct',
+          prompt=prompt,  
+        )
+        translation = response.choices[0].text
+        await message.channel.send(f"The translation is: {translation}")
 
- 
+      elif message.content.startswith('!translate german'):
+        prompt = "Translate this into german: " + message.content.split('!translate german ')[1]
+        response = openai.Completion.create(
+          model ='gpt-3.5-turbo-instruct',
+          prompt=prompt,  
+        )
+        translation = response.choices[0].text
+        await message.channel.send(f"The translation is: {translation}")
+
+      elif message.content.startswith('!translate mandarin'):
+        prompt = "Translate this into mandarin: " + message.content.split('!translate mandarin')[1]
+        response = openai.Completion.create(
+          model ='gpt-3.5-turbo-instruct',
+          prompt=prompt,  
+        )
+        translation = response.choices[0].text
+        await message.channel.send(f"The translation is: {translation}")
+
+      elif message.content.startswith('!translate hindi'):
+        prompt = "Translate this into hindi: " + message.content.split('!translate hindi')[1]
+        response = openai.Completion.create(
+          model ='gpt-3.5-turbo-instruct',
+          prompt=prompt,  
+        )
+        translation = response.choices[0].text
+        await message.channel.send(f"The translation is: {translation}")
+
+      elif message.content.startswith('!translate arabic'):
+        prompt = "Translate this into arabic: " + message.content.split('!translate arabic')[1]
+        response = openai.Completion.create(
+          model ='gpt-3.5-turbo-instruct',
+          prompt=prompt,  
+        )
+        translation = response.choices[0].text
+        await message.channel.send(f"The translation is: {translation}")
+      
+
+      elif message.content.startswith('!translate russian'):
+        prompt = "Translate this into russian: " + message.content.split('!translate russian ')[1]
+        response = openai.Completion.create(
+          model ='gpt-3.5-turbo-instruct',
+          prompt=prompt,  
+        )
+        translation = response.choices[0].text
+        await message.channel.send(f"The translation is: {translation}")
+
+      elif message.content.startswith('translate english')
+        prompt = "Translate this into english: " + message.content.split('!translate english ')[1]
+        response = openai.Completion.create(
+          model = 'gpt-3.5-turbo-instruct',
+          prompt = prompt,
+        )
+        translation = response.choices[0].text
+        await message.channel.send(f"The translation is: {translation}")
+      
+      else:
+        await message.channel.send("As of now, we only provide translation to english, spanish, french, german, mandarin, hindi, arabic, russian"")
+      
       
     if message.content.startswith('!help'):
       await message.channel.send("***Commands***\n**!help** - Shows this message\n**!ask (question)** - Asks ChatGPT a question\n**!8ball** - Asks the magic 8ball a question to get a fun response\n**trivia (topic)** - Generates a trivia question based on the topic\n**!answer** - Alows you to answer a trivia question**!translate (target_language) (text)** - Translates the text to the specified language")
