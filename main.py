@@ -42,8 +42,13 @@ async def on_message(message):
           prompt=prompt,  
         )
         translation = response.choices[0].text
-        await message.channel.send(f"The translation is: {translation}")
-        
+        prompt = "Give the english pronounciation of the spanish text: " + translation
+        response = openai.Completion.create(
+          model ='gpt-3.5-turbo-instruct',
+          prompt=prompt,
+        )
+        pronounciation = response.choices[0].text
+        await message.channel.send(f"The translation is: {translation}\n\n The pronounciation is :{pronounciation}")
       elif message.content.startswith('!translate french'):
         prompt = "Translate this into french: " + message.content.split('!translate french ')[1]
         response = openai.Completion.create(
@@ -51,7 +56,13 @@ async def on_message(message):
           prompt=prompt,  
         )
         translation = response.choices[0].text
-        await message.channel.send(f"The translation is: {translation}")
+        prompt = "Give the english pronounciation of the french text: " + translation
+        response = openai.Completion.create(
+          model ='gpt-3.5-turbo-instruct',
+          prompt=prompt,
+        )
+        pronounciation = response.choices[0].text
+        await message.channel.send(f"The translation is: {translation}\n\n The pronounciation is :{pronounciation}")
 
       elif message.content.startswith('!translate german'):
         prompt = "Translate this into german: " + message.content.split('!translate german ')[1]
@@ -60,34 +71,58 @@ async def on_message(message):
           prompt=prompt,  
         )
         translation = response.choices[0].text
-        await message.channel.send(f"The translation is: {translation}")
+        prompt = "Give the english pronounciation of the german text: " + translation
+        response = openai.Completion.create(
+          model ='gpt-3.5-turbo-instruct',
+          prompt=prompt,
+        )
+        pronounciation = response.choices[0].text
+        await message.channel.send(f"The translation is: {translation}\n\n The pronounciation is :{pronounciation}")
 
       elif message.content.startswith('!translate mandarin'):
-        prompt = "Translate this into mandarin: " + message.content.split('!translate mandarin')[1]
+        prompt = "Translate this into mandarin: " + message.content.split('!translate mandarin ')[1]
         response = openai.Completion.create(
           model ='gpt-3.5-turbo-instruct',
           prompt=prompt,  
         )
         translation = response.choices[0].text
-        await message.channel.send(f"The translation is: {translation}")
+        prompt = "Give the english pronounciation of the mandarin text: " + translation
+        response = openai.Completion.create(
+          model ='gpt-3.5-turbo-instruct',
+          prompt=prompt,
+        )
+        pronounciation = response.choices[0].text
+        await message.channel.send(f"The translation is: {translation}\n\n The pronounciation is :{pronounciation}")
 
       elif message.content.startswith('!translate hindi'):
-        prompt = "Translate this into hindi: " + message.content.split('!translate hindi')[1]
+        prompt = "Translate this into hindi: " + message.content.split('!translate hindi ')[1]
         response = openai.Completion.create(
           model ='gpt-3.5-turbo-instruct',
           prompt=prompt,  
         )
         translation = response.choices[0].text
-        await message.channel.send(f"The translation is: {translation}")
+        prompt = "Give the english pronounciation of the hindi text: " + translation
+        response = openai.Completion.create(
+          model ='gpt-3.5-turbo-instruct',
+          prompt=prompt,
+        )
+        pronounciation = response.choices[0].text
+        await message.channel.send(f"The translation is: {translation}\n\n The pronounciation is :{pronounciation}")
 
       elif message.content.startswith('!translate arabic'):
-        prompt = "Translate this into arabic: " + message.content.split('!translate arabic')[1]
+        prompt = "Translate this into arabic: " + message.content.split('!translate arabic ')[1]
         response = openai.Completion.create(
           model ='gpt-3.5-turbo-instruct',
           prompt=prompt,  
         )
         translation = response.choices[0].text
-        await message.channel.send(f"The translation is: {translation}")
+        prompt = "Give the english pronounciation of the arabic text: " + translation
+        response = openai.Completion.create(
+          model ='gpt-3.5-turbo-instruct',
+          prompt=prompt,
+        )
+        pronounciation = response.choices[0].text
+        await message.channel.send(f"The translation is: {translation}\n\n The pronounciation is :{pronounciation}")
       
 
       elif message.content.startswith('!translate russian'):
@@ -97,9 +132,15 @@ async def on_message(message):
           prompt=prompt,  
         )
         translation = response.choices[0].text
-        await message.channel.send(f"The translation is: {translation}")
+        prompt = "Give the english pronounciation of the russian text: " + translation
+        response = openai.Completion.create(
+          model ='gpt-3.5-turbo-instruct',
+          prompt=prompt,
+        )
+        pronounciation = response.choices[0].text
+        await message.channel.send(f"The translation is: {translation}\n\n The pronounciation is :{pronounciation}")
 
-      elif message.content.startswith('translate english')
+      elif message.content.startswith('translate english'):
         prompt = "Translate this into english: " + message.content.split('!translate english ')[1]
         response = openai.Completion.create(
           model = 'gpt-3.5-turbo-instruct',
@@ -109,7 +150,7 @@ async def on_message(message):
         await message.channel.send(f"The translation is: {translation}")
       
       else:
-        await message.channel.send("As of now, we only provide translation to english, spanish, french, german, mandarin, hindi, arabic, russian"")
+        await message.channel.send("At the moment, we only provide translation to english, spanish, french, german, mandarin, hindi, arabic, russian...but feel free to use other all functions without hesitation!")
       
       
     if message.content.startswith('!help'):
