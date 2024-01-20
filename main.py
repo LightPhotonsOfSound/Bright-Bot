@@ -23,7 +23,7 @@ async def on_message(message):
         return
     print(f"{message.author} said: '{message.content}'")
     if message.content.startswith('!help'):
-      await message.channel.send(" ")
+      await message.channel.send("***Commands***\n**!help** - Shows this message\n**!ask (question)** - Asks ChatGPT a question\n**!8ball** - Asks the magic 8ball a question to get a fun response\n**trivia (topic)** - Generates a trivia question based on the topic\n**!answer** - Alows you to answer a trivia question")
     if message.content.startswith('!ask'):
         answer_prompt = message.content[4:]
         response = openai.Completion.create(
