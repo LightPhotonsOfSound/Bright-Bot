@@ -38,7 +38,7 @@ async def on_message(message):
       
     if message.content.startswith('!translate'):
       message_content = message.content.split(' ', 1)[1]
-      message_content = message_content.split(' ', 1)[1]
+      #message_content = message_content.split(' ', 1)[1]
       prompt = "Detect the language of the following text: " + message_content
       response = openai.Completion.create(
         model = 'gpt-3.5-turbo-instruct',
@@ -198,8 +198,10 @@ async def on_message(message):
     if message.content.startswith('!trivia'):
       responses.clear()
       if len(message.content) > 10:
+        time = '20'
         time = message.content[-2:]
         time = int(time)
+
         if time < 10 or time > 40:
           await message.channel.send("The time must be between 10 and 40 seconds! Try again.")
         else:
@@ -248,9 +250,14 @@ async def on_message(message):
           ind = val_list.index(correct_option)
           username = key_list[ind]
           print(responses)
-          await message.channel.send(f"\n***{guesser} guessed it right!!***")
+          await message.channel.send(f"\n***{username} guessed it right!!***")
+          leaderboard[username] = leaderboard.get(username, 0) + 1
+    
+    if message.content.startswith('!leaderboard'):
+      await message.channel.send(f"The leaderboard is: **{leaderboard}**")
 
-          
+  
+            
 
 
 
