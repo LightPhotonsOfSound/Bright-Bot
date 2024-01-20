@@ -1,88 +1,107 @@
 import discord
 from discord.ext import commands
 import openai
-import asyncio
+import asyncio 
 import os
-
-DISCORD_TOKEN = os.environ['TOKEN'] # gets token from environment variable
-openai.api_key = os.environ['OPENAI_API_KEY'] # gets api key from environment variable
+global correct_option  # Add this line after the import statements
+responses = {}
+TOKEN = os.environ['TOKEN']
+openai.api_key = os.environ['API']
 
 intents = discord.Intents.all()
-intents.messages = True #sets message intents as true, to enable the bot to send messages
-bot = discord.Client(command_prefix='!', intents=intents)
+intents.messages = True
 
-responses = {} #dictionary that stores the responses of the users for the MCQ's
+bot = commands.Bot(command_prefix='!',intents=intents)
 
 @bot.event
 async def on_ready():
-  print(f' We have logged in as {bot.user.name}') #this for confirmation on our side
+    print(f'We have logged in as {bot.user}')
 
 @bot.event
 async def on_message(message):
-    if message.author == bot.user: # prevents the bot from chatting with itself
-      return
-  
-  
+    if message.author == bot.user:
+        return
+    print(f"{message.author} said: '{message.content}'")
     if message.content.startswith('!help'):
-      await message.channel.send("!ask (your question) - Asks ChatGPT a question. \n!8ball (your question) - Gives an 8ball response for . \n!help - Shows this message. !trivia (topic) - Generates a multiple-choice question on the given topic \n!answer (your answer) - Allows you to give your answer for the multiple-choice question to see if you're right. ") #describes what the command to chatgpt is and what the command is
-  
+      await message.channel.send(" ")
     if message.content.startswith('!ask'):
-      ask_prompt = message.content[5:]
+        answer_prompt = message.content[4:]
+        response = openai.Completion.create(
+          model ='gpt-3.5-turbo-instruct',
+          prompt=answer_prompt,
+          max_tokens=400,
+        )
+        await message.channel.send(response.choices[0].text)            
+    if message.content.startswith('!8ball'):
+      answer_prompt = message.content[4:]
       response = openai.Completion.create(
         model ='gpt-3.5-turbo-instruct',
-        prompt=ask_prompt,
-        max_tokens=400
+          prompt=f"Answer this question and after that give some more background information to support it(make it short) : '{answer_prompt}'Add a little spice into your message to make it fun (no one will take it personally so don't worry). Say stuff like that to make it entertaining ;). Your advice won't be taken seriously so say something funny. This is an 8ball so it doesn't have to be realistic, Insult someone, kill someone, make someone ugly, you can do anything",
+        max_tokens=400,
       )
-      await message.channel.send(response.choices[0].text)
-  
-      
-    if message.content.startswith('!trivia'):
-      topic = message.content.split("!trivia")
-
-      triviaprompt = f'Create a multiple-choice question, (make only 4 options) on the topic of "{topic}" and dont give the answer with the question.'
-      response = openai.Completion.create(
-        model = "gpt-3.5-turbo-instruct",
-        prompt = triviaprompt,
-        max_tokens = 500, 
-        temperature = 0.7
-        )
-      generated_question = response.choices[0].text
-   #   await message.channel.send(generated_question)
-      answer_prompt = f"This is a multiple choice question : {generated_question}\nProvide an answer with some explaination Example :' A. .... ' "
-
-      response = openai.Completion.create(
-
-        model = "gpt-3.5-turbo-instruct",
-        prompt = answer_prompt,
-        max_tokens = 500,
-        temperature = 0.7
-      )
-      answer = response.choices[0].text
-      correct_option = answer[0]
-    #  await message.channel.send(f"The correct answer is : {answer}")
-  
-    if message.content.startswith('!8ball'):
-      eightball = message.content.split("!8ball")
-      ballprompt = (f"Answer the question : '{eightball}'. Once you are done answering the question, give a small explaination on why you chose the answer you gave. Remember to make it funny and spicy. Don't worry about insulting anyone because this is made just for entertainment purposes. This is an 8ball so make it as creative as possible ")
-      response = openai.Completion.create(
-        model = "gpt-3.5-turbo-instruct",
-        prompt = ballprompt,
-        max_tokens = 400,
-      )
-      await message.channel.send(response.choices[0].text)
-
-    if message.content.startswith('!answer'):
-      guess = message.content.lower()[8]
-      response.update({message.author: guess})
-      print_message = (f"{message.author} guessed {guess}") 
+      await message.channel.send(response.choices[0].text) 
+    topic = "math"
+    if message.content.startswith('!guess'):
+      global guess
+      guess = message.content.lower()[7]
+      print(f"{message.author} guessed: {guess}")
+      global guesser
       guesser = message.author
       global responses
-      responses.update({str(guesser): guess})
+      responses.update({str(guesser) : guess})
 
-    await message.channel.send(generated_question)
-    await asyncio.sleep(20)
-    await message.channel.send(f"The correct answer is : {answer}")  
+    if message.content.startswith('!trivia'):
+      responses.clear()
+      if len(message.content) > 6:
+        topic = message.content.split('!trivia ')[1]
+        prompt1 = f'Create a multiple-choice question, (make only 4 options) on the topic of "{topic}" and dont give the answer with the question.'
 
-bot.run(DISCORD_TOKEN)
+        response = openai.Completion.create(
+            model ='gpt-3.5-turbo-instruct',
+            prompt=prompt1,
+            max_tokens=150,
+          # chat_completion=True
+        ) 
 
-      answer_prompt = (f"Give the answer to the following question: {generated_question}. Also explain why that is the correct answer Start your answer with the correct option for eg: A. ...")
+        # Extract the generated question from the response
+        generated_question = response['choices'][0]['text'].strip()
+
+
+
+        # Create a dynamic prompt for the answer
+        answer_prompt = f"This is a multiple choice question : {generated_question}\nProvide an answer with some explaination Example :' A. .. ' "
+
+        # Request an answer based on the generated question
+        answer_response = openai.Completion.create(
+            model ='gpt-3.5-turbo-instruct',
+            prompt=answer_prompt,
+            max_tokens=400,
+           # chat_completion=True
+        )
+      #  await asyncio.sleep(15)
+
+        # Extract the generated answer from the response
+        generated_answer = answer_response['choices'][0]['text'].strip()
+        correct_option = generated_answer.lower()[0]
+        print(f"Correct option: {correct_option}")
+
+        # Send the generated question and answer to the Discord channel
+        await message.channel.send(f"You have 20 seconds to answer this: {generated_question}")
+        await asyncio.sleep(20)
+
+        await message.channel.send(f"The answer is : {generated_answer}")
+        print(responses)
+        val_list = list(responses.values())
+        key_list = list(responses.keys())
+        ind = val_list.index(correct_option)
+        username = key_list[ind]
+        await message.channel.send(f"\n***{username} guessed it right!!***")
+
+
+
+
+    else:
+      return
+
+
+bot.run(TOKEN)
