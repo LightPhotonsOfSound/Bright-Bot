@@ -27,35 +27,53 @@ async def on_message(message):
       await message.channel.send("!ask (your question) - Asks ChatGPT a question. \n!8ball (your question) - Gives an 8ball response for . \n!help - Shows this message. !trivia (topic) - Generates a multiple-choice question on the given topic \n!answer (your answer) - Allows you to give your answer for the multiple-choice question to see if you're right. ") #describes what the command to chatgpt is and what the command is
   
     if message.content.startswith('!ask'):
-      answer_prompt = message.content[4:]
+      ask_prompt = message.content[5:]
       response = openai.Completion.create(
         model ='gpt-3.5-turbo-instruct',
-        prompt=answer_prompt,
-        max_tokens=400,
+        prompt=ask_prompt,
+        max_tokens=400
       )
-    await message.channel.send(response.choices[0].text)  
-  
-  
-    if message.content.startswith('!trivia'):
-      topic = message.content.split("!trivia")
-      triviaprompt = (f"Create a multiple choice question with 4 options on the topic: {topic}. ")
-      response = openai.Completion.create(
-        model = "gpt-3.5-turbo-instruct",
-        prompt = triviaprompt,
-        max_tokens = 500,
-        temperature = 0.7
-        )
       await message.channel.send(response.choices[0].text)
+  
+  
+
       
   
   
-    if message.content.startswith('!answer'):
-      global guess
-      guess = message.content.lower()[8]
-      response.update({message.author: guess})
-      print = (f"{message.author} guessed {guess}")
-  
-  
+    #if message.content.startswith('!answer'):
+      #global guess
+      #guess = message.content.lower()[8]
+      #response.update({message.author: guess})
+      #print = (f"{message.author} guessed {guess}")
+      #global guesser 
+      #guesser = message.author
+      #global responses
+      #responses.update({str(guesser): guess})
+      
+    if message.content.startswith('!trivia'):
+      topic = message.content.split("!trivia")
+
+      triviaprompt = f'Create a multiple-choice question, (make only 4 options) on the topic of "{topic}" and dont give the answer with the question.'
+      response = openai.Completion.create(
+        model = "gpt-3.5-turbo-instruct",
+        prompt = triviaprompt,
+        max_tokens = 500, 
+        temperature = 0.7
+        )
+      generated_question = response.choices[0].text
+   #   await message.channel.send(generated_question)
+      answer_prompt = f"This is a multiple choice question : {generated_question}\nProvide an answer with some explaination Example :' A. .. ' "
+
+      response = openai.Completion.create(
+
+        model = "gpt-3.5-turbo-instruct",
+        prompt = answer_prompt,
+        max_tokens = 500,
+        temperature = 0.7
+      )
+      answer = response.choices[0].text
+      correct_option = answer[0]
+    #  await message.channel.send(f"The correct answer is : {answer}")
   
     if message.content.startswith('!8ball'):
       eightball = message.content.split("!8ball")
@@ -66,7 +84,10 @@ async def on_message(message):
         max_tokens = 400,
       )
       await message.channel.send(response.choices[0].text)
-  
+
+    await message.channel.send(generated_question)
+    asyncio.sleep(20)
+    await message.channel.send(f"The correct answer is : {answer}")
   
 
 bot.run(DISCORD_TOKEN)
