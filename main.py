@@ -35,6 +35,14 @@ async def on_message(message):
         prompt=prompt,
         max_tokens=100,
       )
+    if message.content.startswith('!suggestbook'):
+      prompt = f"Suggest a book based on the following theme/themes : {message.content.split('!suggestbook')}. Also give some background information on the book."
+      response = openai.Completion.create(
+        model ='gpt-3.5-turbo-instruct',
+        prompt=prompt,
+        max_tokens=100,
+      )
+      await message.channel.send(response.choices[0].text)
       await message.channel.send(response.choices[0].text)   
 
     if message.content.startswith('!translate'):
@@ -168,7 +176,7 @@ async def on_message(message):
 
 
     if message.content.startswith('!help'):
-      await message.channel.send("***Commands***\n**!help** -     Shows this message\n**!ask (question)** - Have a doubt that needs to be answered? Use the ask function to ask a general question to BrightBot!\n**!8ball** - The function of fun has arrived! Use the 8ball function to have some fun in your study breaks and free time. Here you can input a topic you want to bot to talk about, and watch as BrightBot gives the spiciest of answers.\n**!trivia (topic)** - Are your studies too boring? Don't worry, help has arrived. Use the Trivia function to generate a trivia question on any topic of your choice. While entering the function, don't forget to specify the time limit you want to be able to answer in, which will help in increasing your thinking speed. Collaborate with your friends to double the fun!\n**!answer** - Can you think of an answer? If you can, use the answer function to answer the trivia questions and to check if your answer is right.\n**!translate** (target_language) (text) - Can't understand a certain language? Yet again, help has arrived. Use the translate function to translate text from one language to another.\n**!funfact** - Want to know more about the world? The fun fact function will generate a random fun fact that will provide you with new information!\n**!leaderboard** - What makes quizes fun without a proper pointing system? Use this command to find the score of each user. Remember, to get more points, answer more trivia questions!\n**!news** - Get the latest and top 10 trending news straight from BBC to be updated on world happenings and events.\n**Format** - The format of your function messages have to be as follows: For trivia - !trivia (topic) (time limit) For other functions - !(function) (text).\n**Note** - Do not actually use brackets while executing functions, brackets were just used to specify the type of text needed to be added. For example, if you need a trivia question on math with a time limit of 20 seconds, you have to use - !trivia math 20.")
+      await message.channel.send("***Commands***\n**!help** -     Shows this message\n**!ask (question)** - Have a doubt that needs to be answered? Use the ask function to ask a general question to BrightBot!\n**!8ball** - The function of fun has arrived! Use the 8ball function to have some fun in your study breaks and free time. Here you can input a topic you want to bot to talk about, and watch as BrightBot gives the spiciest of answers.\n**!trivia (topic)** - Are your studies too boring? Don't worry, help has arrived. Use the Trivia function to generate a trivia question on any topic of your choice. While entering the function, don't forget to specify the time limit you want to be able to answer in, which will help in increasing your thinking speed. Collaborate with your friends to double the fun!\n**!answer** - Can you think of an answer? If you can, use the answer function to answer the trivia questions and to check if your answer is right.\n**!translate** (target_language) (text) - Can't understand a certain language? Yet again, help has arrived. Use the translate function to translate text from one language to another.\n**!funfact** - Want to know more about the world? The fun fact function will generate a random fun fact that will provide you with new information!\n**!leaderboard** - What makes quizes fun without a proper pointing system? Use this command to find the score of each user. Remember, to get more points, answer more trivia questions!\n**!news** - Get the latest and top 10 trending news straight from BBC to be updated on world happenings and events.\n**!suggestbook** - Searching for a book that gives you the information you want to know about, but can't find any? Look no further! With the suggest book function, find the books you are looking for with specific topics and paticular information!")
 
     if message.content.startswith('!ask'):
         answer_prompt = message.content[4:]
