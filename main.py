@@ -28,6 +28,19 @@ async def on_message(message):
         return
     print(f"{message.author} said: '{message.content}'")
 
+    if message.content.startswith('!quote'):
+      topic = message.content.split('!quote')[1]
+      prompt = f"Give me a quote on the topic of: {topic} and display the author's name.)."
+      response = openai.Completion.create(
+        model ='gpt-3.5-turbo-instruct',
+        prompt=prompt,
+        max_tokens=500,
+      )
+      answer = (response.choices[0].text)
+      await message.channel.send(f"A quote on the topic of {topic} is: {answer}") 
+      
+
+
     if message.content.startswith('!funfact'):
       prompt = "Generate a random fun fact"
       response = openai.Completion.create(
@@ -35,15 +48,16 @@ async def on_message(message):
         prompt=prompt,
         max_tokens=100,
       )
+      await message.channel.send(response.choices[0].text) 
+      
     if message.content.startswith('!suggestbook'):
       prompt = f"Suggest a book based on the following theme/themes : {message.content.split('!suggestbook')}. Also give some background information on the book."
       response = openai.Completion.create(
         model ='gpt-3.5-turbo-instruct',
         prompt=prompt,
-        max_tokens=100,
+        max_tokens=300,
       )
-      await message.channel.send(response.choices[0].text)
-      await message.channel.send(response.choices[0].text)   
+      await message.channel.send(response.choices[0].text) 
 
     if message.content.startswith('!translate'):
       message_content = message.content.split(' ', 1)[1]
@@ -60,12 +74,14 @@ async def on_message(message):
         response = openai.Completion.create(
           model ='gpt-3.5-turbo-instruct',
           prompt=prompt,  
+          max_tokens=600,
         )
         translation = response.choices[0].text
         prompt = "Give the english pronounciation of the spanish text: " + translation
         response = openai.Completion.create(
           model ='gpt-3.5-turbo-instruct',
           prompt=prompt,
+          max_tokens=600,
         )
         pronounciation = response.choices[0].text
         await message.channel.send(f"The translation is: {translation}\n\n The pronounciation is :{pronounciation}")
@@ -74,12 +90,14 @@ async def on_message(message):
         response = openai.Completion.create(
           model ='gpt-3.5-turbo-instruct',
           prompt=prompt,  
+          max_tokens=600,
         )
         translation = response.choices[0].text
         prompt = "Give the english pronounciation of the french text: " + translation
         response = openai.Completion.create(
           model ='gpt-3.5-turbo-instruct',
           prompt=prompt,
+          max_tokens=600,
         )
         pronounciation = response.choices[0].text
         await message.channel.send(f"The translation is: {translation}\n\n The pronounciation is :{pronounciation}")
@@ -89,12 +107,14 @@ async def on_message(message):
         response = openai.Completion.create(
           model ='gpt-3.5-turbo-instruct',
           prompt=prompt,  
+          max_tokens=600,
         )
         translation = response.choices[0].text
         prompt = "Give the english pronounciation of the german text: " + translation
         response = openai.Completion.create(
           model ='gpt-3.5-turbo-instruct',
           prompt=prompt,
+          max_tokens=600,
         )
         pronounciation = response.choices[0].text
         await message.channel.send(f"The translation is: {translation}\n\n The pronounciation is :{pronounciation}")
@@ -104,12 +124,14 @@ async def on_message(message):
         response = openai.Completion.create(
           model ='gpt-3.5-turbo-instruct',
           prompt=prompt,  
+          max_tokens=600,
         )
         translation = response.choices[0].text
         prompt = "Give the english pronounciation of the mandarin text: " + translation
         response = openai.Completion.create(
           model ='gpt-3.5-turbo-instruct',
           prompt=prompt,
+          max_tokens=600,
         )
         pronounciation = response.choices[0].text
         await message.channel.send(f"The translation is: {translation}\n\n The pronounciation is :{pronounciation}")
@@ -119,12 +141,14 @@ async def on_message(message):
         response = openai.Completion.create(
           model ='gpt-3.5-turbo-instruct',
           prompt=prompt,  
+          max_tokens=600,
         )
         translation = response.choices[0].text
         prompt = "Give the english pronounciation of the hindi text: " + translation
         response = openai.Completion.create(
           model ='gpt-3.5-turbo-instruct',
           prompt=prompt,
+          max_tokens=600,
         )
         pronounciation = response.choices[0].text
         await message.channel.send(f"The translation is: {translation}\n\n The pronounciation is :{pronounciation}")
@@ -134,12 +158,14 @@ async def on_message(message):
         response = openai.Completion.create(
           model ='gpt-3.5-turbo-instruct',
           prompt=prompt,  
+          max_tokens=600,
         )
         translation = response.choices[0].text
         prompt = "Give the english pronounciation of the arabic text: " + translation
         response = openai.Completion.create(
           model ='gpt-3.5-turbo-instruct',
           prompt=prompt,
+          max_tokens=600,
         )
         pronounciation = response.choices[0].text
         await message.channel.send(f"The translation is: {translation}\n\n The pronounciation is :{pronounciation}")
@@ -150,12 +176,14 @@ async def on_message(message):
         response = openai.Completion.create(
           model ='gpt-3.5-turbo-instruct',
           prompt=prompt,  
+          max_tokens=600,
         )
         translation = response.choices[0].text
         prompt = "Give the english pronounciation of the russian text: " + translation
         response = openai.Completion.create(
           model ='gpt-3.5-turbo-instruct',
           prompt=prompt,
+          max_tokens=600,
         )
         pronounciation = response.choices[0].text
         await message.channel.send(f"The translation is: {translation}\n\n The pronounciation is :{pronounciation}")
@@ -176,7 +204,7 @@ async def on_message(message):
 
 
     if message.content.startswith('!help'):
-      await message.channel.send("***Commands***\n**!help** -     Shows this message\n**!ask (question)** - Have a doubt that needs to be answered? Use the ask function to ask a general question to BrightBot!\n**!8ball** - The function of fun has arrived! Use the 8ball function to have some fun in your study breaks and free time. Here you can input a topic you want to bot to talk about, and watch as BrightBot gives the spiciest of answers.\n**!trivia (topic)** - Are your studies too boring? Don't worry, help has arrived. Use the Trivia function to generate a trivia question on any topic of your choice. While entering the function, don't forget to specify the time limit you want to be able to answer in, which will help in increasing your thinking speed. Collaborate with your friends to double the fun!\n**!answer** - Can you think of an answer? If you can, use the answer function to answer the trivia questions and to check if your answer is right.\n**!translate** (target_language) (text) - Can't understand a certain language? Yet again, help has arrived. Use the translate function to translate text from one language to another.\n**!funfact** - Want to know more about the world? The fun fact function will generate a random fun fact that will provide you with new information!\n**!leaderboard** - What makes quizes fun without a proper pointing system? Use this command to find the score of each user. Remember, to get more points, answer more trivia questions!\n**!news** - Get the latest and top 10 trending news straight from BBC to be updated on world happenings and events.\n**!suggestbook** - Searching for a book that gives you the information you want to know about, but can't find any? Look no further! With the suggest book function, find the books you are looking for with specific topics and paticular information!")
+      await message.channel.send("***Commands***\n**!help** -     Shows this message\n**!ask (question)** - Have a doubt that needs to be answered? Use the ask function to ask a general question to BrightBot!\n**!8ball** - The function of fun has arrived! Use the 8ball function to have some fun in your study breaks and free time. Here you can input a topic you want to bot to talk about, and watch as BrightBot gives the spiciest of answers.\n**!trivia (topic)** - Are your studies too boring? Don't worry, help has arrived. Use the Trivia function to generate a trivia question on any topic of your choice. While entering the function, don't forget to specify the time limit you want to be able to answer in, which will help in increasing your thinking speed. Collaborate with your friends to double the fun!\n**!answer** - Can you think of an answer? If you can, use the answer function to answer the trivia questions and to check if your answer is right.\n**!translate** (target_language) (text) - Can't understand a certain language? Yet again, help has arrived. Use the translate function to translate text from one language to another.\n**!funfact** - Want to know more about the world? The fun fact function will generate a random fun fact that will provide you with new information!\n**!quote** - Need a motivational start to the day, or a boost out of depression and anxiety? Use the quote function to generate a quote on the topic of your choice!\n**!leaderboard** - What makes quizes fun without a proper pointing system? Use this command to find the score of each user. Remember, to get more points, answer more trivia questions!\n**!news** - Get the latest and top 10 trending news straight from BBC to be updated on world happenings and events.\n**!suggestbook** - Searching for a book that gives you the information you want to know about, but can't find any? Look no further! With the suggest book function, find the books you are looking for with specific topics and paticular information!")
 
     if message.content.startswith('!ask'):
         answer_prompt = message.content[4:]
@@ -266,7 +294,7 @@ async def on_message(message):
 
     if message.content.startswith('!leaderboard'):
       sorted_dict = sorted(leaderboard.items(), key=lambda x: x[1], reverse=True)
-      final_leaderboard = tabulate(sorted_dict, headers=["Name", "Score"], tablefmt="simple")
+      final_leaderboard = tabulate(sorted_dict, headers=["Name", "Score"], tablefmt="fancy_grid")
       print(final_leaderboard)  
       await message.channel.send("\t\t\t***LEADERBOARD***\n" + final_leaderboard)
     if message.content.startswith('!news'):      
