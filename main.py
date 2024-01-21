@@ -3,30 +3,31 @@ from discord.ext import commands
 import openai
 import asyncio 
 import os
-
+from tabulate import tabulate
+import requests
 
 global correct_option  
+leaderboard = {}
 responses = {}
 TOKEN = os.environ['TOKEN']
 openai.api_key = os.environ['API']
-
+leaderboard = {}
 intents = discord.Intents.all()
 intents.messages = True
-global leaderboard
-leaderboard = {}
 bot = commands.Bot(command_prefix='!',intents=intents)
+
 
 @bot.event
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
-      
+
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
     print(f"{message.author} said: '{message.content}'")
-  
+
     if message.content.startswith('!funfact'):
       prompt = "Generate a random fun fact"
       response = openai.Completion.create(
@@ -35,7 +36,7 @@ async def on_message(message):
         max_tokens=100,
       )
       await message.channel.send(response.choices[0].text)   
-      
+
     if message.content.startswith('!translate'):
       message_content = message.content.split(' ', 1)[1]
       #message_content = message_content.split(' ', 1)[1]
@@ -134,7 +135,7 @@ async def on_message(message):
         )
         pronounciation = response.choices[0].text
         await message.channel.send(f"The translation is: {translation}\n\n The pronounciation is :{pronounciation}")
-      
+
 
       elif message.content.startswith('!translate russian'):
         prompt = "Translate this into russian: " + message.content.split('!translate russian ')[1]
@@ -161,14 +162,14 @@ async def on_message(message):
         )
         translation = response.choices[0].text
         await message.channel.send(f"The translation is: {translation}")
-      
+
       else:
         await message.channel.send("At the moment, we only provide translation to english, spanish, french, german, mandarin, hindi, arabic, russian... but feel free to use other all functions without hesitation!")
-      
-      
+
+
     if message.content.startswith('!help'):
-      await message.channel.send("***Commands***\n**!help** -     Shows this message\n**!ask (question)** - Have a doubt that needs to be answered? Use the ask function to ask a general question to BrightBot!\n**!8ball** - The function of fun has arrived! Use the 8ball function to have some fun in your study breaks and free time. Here you can input a topic you want to bot to talk about, and watch as BrightBot gives the spiciest of answers.\n**!trivia (topic)** - Are your studies too boring? Don't worry, help has arrived. Use the Trivia function to generate a trivia question on any topic of your choice. While entering the function, don't forget to specify the time limit you want to be able to answer in, which will help in increasing your thinking speed. Collaborate with your friends to double the fun!\n**!answer** - Can you think of an answer? If you can, use the answer function to answer the trivia questions and to check if your answer is right.\n**!translate** (target_language) (text) - Can't understand a certain language? Yet again, help has arrived. Use the translate function to translate text from one language to another.\n**!funfact** - Want to know more about the world? The fun fact function will generate a random fun fact that will provide you with new information!\n**Format** - The format of your function messages have to be as follows: For trivia - !trivia (topic) (time limit) For other functions - !(function) (text).\n**Note** - Do not actually use brackets while executing functions, brackets were just used to specify the type of text needed to be added. For example, if you need a trivia question on math with a time limit of 20 seconds, you have to use - !trivia math 20.")
-    
+      await message.channel.send("***Commands***\n**!help** -     Shows this message\n**!ask (question)** - Have a doubt that needs to be answered? Use the ask function to ask a general question to BrightBot!\n**!8ball** - The function of fun has arrived! Use the 8ball function to have some fun in your study breaks and free time. Here you can input a topic you want to bot to talk about, and watch as BrightBot gives the spiciest of answers.\n**!trivia (topic)** - Are your studies too boring? Don't worry, help has arrived. Use the Trivia function to generate a trivia question on any topic of your choice. While entering the function, don't forget to specify the time limit you want to be able to answer in, which will help in increasing your thinking speed. Collaborate with your friends to double the fun!\n**!answer** - Can you think of an answer? If you can, use the answer function to answer the trivia questions and to check if your answer is right.\n**!translate** (target_language) (text) - Can't understand a certain language? Yet again, help has arrived. Use the translate function to translate text from one language to another.\n**!funfact** - Want to know more about the world? The fun fact function will generate a random fun fact that will provide you with new information!\n**!leaderboard** - What makes quizes fun without a proper pointing system? Use this command to find the score of each user. Remember, to get more points, answer more trivia questions!\n**!news** - Get the latest and top 10 trending news straight from BBC to be updated on world happenings and events.\n**Format** - The format of your function messages have to be as follows: For trivia - !trivia (topic) (time limit) For other functions - !(function) (text).\n**Note** - Do not actually use brackets while executing functions, brackets were just used to specify the type of text needed to be added. For example, if you need a trivia question on math with a time limit of 20 seconds, you have to use - !trivia math 20.")
+
     if message.content.startswith('!ask'):
         answer_prompt = message.content[4:]
         response = openai.Completion.create(
@@ -207,22 +208,22 @@ async def on_message(message):
         else:
           topic = message.content[8:-2]
           prompt1 = f'Create a multiple-choice question, (make only 4 options) on the topic of "{topic}" and dont give the answer with the question.'
-  
+
           response = openai.Completion.create(
               model ='gpt-3.5-turbo-instruct',
               prompt=prompt1,
               max_tokens=150,
             # chat_completion=True
           ) 
-  
+
           # Extract the generated question from the response
           generated_question = response['choices'][0]['text'].strip()
-  
-  
-  
+
+
+
           # Create a dynamic prompt for the answer
           answer_prompt = f"This is a multiple choice question : {generated_question}\nProvide an answer with some explaination Example :' A. .. ' Remember, the answer has to first start with the correct letter and then go to the rest. "
-  
+
           # Request an answer based on the generated question
           answer_response = openai.Completion.create(
               model ='gpt-3.5-turbo-instruct',
@@ -230,19 +231,19 @@ async def on_message(message):
               max_tokens=400,
              # chat_completion=True
           )
-  
+
           # Extract the generated answer from the response
           generated_answer = answer_response['choices'][0]['text'].strip()
           correct_option = generated_answer.lower()[0]
           print(f"Correct option: {correct_option}")
 
          # if message.content.startswith('!leaderboard'):
-            
-  
+
+
           # Send the generated question and answer to the Discord channel
           await message.channel.send(f"You have {time} seconds to answer this: {generated_question}")
           await asyncio.sleep(time)
-  
+
           await message.channel.send(f"The answer is : {generated_answer}")
           print(responses)
           val_list = list(responses.values())
@@ -250,18 +251,38 @@ async def on_message(message):
           ind = val_list.index(correct_option)
           username = key_list[ind]
           print(responses)
-          await message.channel.send(f"\n***{username} guessed it right!!***")
+          await message.channel.send(f"\n***{username} guessed it right!!\nCongratulations, you have recieved 1 point! KEEP IT UP!***")
+          global leaderboard
           leaderboard[username] = leaderboard.get(username, 0) + 1
-    
+          print(leaderboard)
+
     if message.content.startswith('!leaderboard'):
-      await message.channel.send(f"The leaderboard is: **{leaderboard}**")
+      sorted_dict = sorted(leaderboard.items(), key=lambda x: x[1], reverse=True)
+      final_leaderboard = tabulate(sorted_dict, headers=["Name", "Score"], tablefmt="simple")
+      print(final_leaderboard)  
+      await message.channel.send("\t\t\t***LEADERBOARD***\n" + final_leaderboard)
+    if message.content.startswith('!news'):      
+      prompt = "Give me the latest news in english"
+      query_params = {
+        "source": "bbc-news",
+        "sortBy": "top",
+        "apiKey": os.environ['newsAPI']
+      }
+      main_url = " https://newsapi.org/v1/articles"
+      res = requests.get(main_url, params=query_params)
+      open_bbc_page = res.json()
+      article = open_bbc_page["articles"]
+      results = []
+      for ar in article:
+          results.append(ar["title"])
+      await message.channel.send(f"**TRENDING NEWS IN BBC :**")
+      for i in range(len(results)):
+          await message.channel.send (f"{i+1}. {results[i]}")
+          
 
-  
-            
+    
 
-
-
-
+      
     else:
       return
 
